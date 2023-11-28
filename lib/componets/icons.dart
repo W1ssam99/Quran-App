@@ -18,3 +18,4 @@ var quranIco="assets/icons/cib-readme 1.svg";
 var quranPhoto="assets/icons/Quran.svg";
 
 var muslimIco="assets/icons/muslim (1) 1.svg";
+

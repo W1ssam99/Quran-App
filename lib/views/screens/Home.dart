@@ -39,77 +39,25 @@ class HomeScreen extends StatelessWidget {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.only(left: 20, right: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            UserView(),
-            20.heightBox,
-            LastRead(),
-            20.heightBox,
-           DefaultTabController(
-  length: 4,
-  child: Column(
-    children: [
-      TabBar(
-        labelColor: mainColor,
-        unselectedLabelColor: secondaryColor,
-        indicatorColor: mainColor,
-        indicatorSize: TabBarIndicatorSize.label,
-        tabs: [
-          Tab(
-            child: Text(
-              "Surah",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+        padding: const EdgeInsets.only(left: 20, right: 20),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+               Container(
+               height:  MediaQuery.of(context).size.height*0.1,
+                  child: UserView()),
+              10.heightBox,
+               Container(
+                height:  MediaQuery.of(context).size.height*0.16,
+                  child: LastRead()),
+              10.heightBox,
+              Container(
+                height: MediaQuery.of(context).size.height*0.61,
+                  child: MyTabBar())
+            ],
           ),
-          Tab(
-            child: Text(
-              "Para",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          Tab(
-            child: Text(
-              "Juz",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-          Tab(
-            child: Text(
-              "Hizb",
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ),
-        ],
-      ),
-      Container(
-        height: 300,
-        child: TabBarView(
-          children: [
-            SurahListView(), // Replace with your Surah list view widget
-            ParaListView(), // Replace with your Para list view widget
-            JuzListView(), // Replace with your Juz list view widget
-            HizbListView(), // Replace with your Hizb list view widget
-          ],
-        ),
-      )
-    ],
-  ),
-),
-          ],
         ),
       ),
     );
