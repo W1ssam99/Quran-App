@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:quran/quran.dart';
-
 import '../widgets/homeScreenWidget.dart';
 import 'detailsScreens/surahScreen.dart';
 

@@ -1,9 +1,8 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:quran/quran.dart';
 import 'package:untitled5/componets/icons.dart';
-
 import '../../../componets/colors.dart';
 
 class MyAudioPlayer extends StatefulWidget {
@@ -17,14 +16,16 @@ class MyAudioPlayer extends StatefulWidget {
 
 class _MyAudioPlayerState extends State<MyAudioPlayer> {
   late AudioPlayer audioPlayer;
+  Duration duration = Duration.zero;
+  Duration position = Duration.zero;
   bool isPlaying = false;
   bool isSaved = false;
-
 
   @override
   void initState() {
     super.initState();
     audioPlayer = AudioPlayer();
+    loadAudio();
   }
 
   @override
@@ -33,29 +34,27 @@ class _MyAudioPlayerState extends State<MyAudioPlayer> {
     super.dispose();
   }
 
-  Future<void> playAudio() async {
-    if (isPlaying) {
-      await audioPlayer.pause();
-      setState(() {
-        isPlaying = false;
-      });
-    } else {
-      try {
-        await audioPlayer.play(
-          UrlSource(
-           "https://download.quranicaudio.com/quran/abdurrahmaan_as-sudays/001.mp3"
-          ),
-        );
+  Future<void> loadAudio() async {
+    final surahAudioUrl = getAudioURLBySurah(widget.surahIndex);
+    await audioPlayer.setUrl(surahAudioUrl);
 
-        setState(() {
-          isPlaying = !isPlaying;
-        });
-        print('Playing audio');
-        print(getAudioURLBySurah(widget.surahIndex));
-      } catch (e) {
-        print('Error playing audio: $e');
-      }
-    }
+    audioPlayer.durationStream.listen((event) {
+      setState(() {
+        duration = event!;
+      });
+    });
+
+    audioPlayer.positionStream.listen((event) {
+      setState(() {
+        position = event;
+      });
+    });
+
+    audioPlayer.playerStateStream.listen((event) {
+      setState(() {
+        isPlaying = event.playing;
+      });
+    });
   }
 
   @override
@@ -94,8 +93,13 @@ class _MyAudioPlayerState extends State<MyAudioPlayer> {
             ],
           ),
           Slider(
-            value: 0.5,
-            onChanged: (value) {},
+            value: position.inSeconds.toDouble(),
+            onChanged: (value) {
+              final newPosition = Duration(seconds: value.toInt());
+              audioPlayer.seek(newPosition);
+            },
+            min: 0,
+            max: duration.inSeconds.toDouble(),
             activeColor: secondaryColor,
             inactiveColor: secondaryColor.withOpacity(0.5),
           ),
@@ -103,35 +107,24 @@ class _MyAudioPlayerState extends State<MyAudioPlayer> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  audioPlayer.seek(Duration.zero); // Seek to the start of the audio
+                },
                 icon: Icon(
                   Icons.skip_previous,
                   color: secondaryColor,
                 ),
               ),
               IconButton(
-                onPressed: () async {
+                onPressed: () {
                   if (isPlaying) {
-                    await audioPlayer.pause();
-                    setState(() {
-                      isPlaying = false;
-                    });
+                    audioPlayer.pause();
                   } else {
-                    try {
-                      await audioPlayer.play(
-                         UrlSource(
-                            getAudioURLBySurah(widget.surahIndex)
-                        ),
-                      );
-                      setState(() {
-                        isPlaying = true;
-                      });
-                      print('Playing audio');
-                      print(getAudioURLBySurah(widget.surahIndex));
-                    } catch (e) {
-                      print('Error playing audio: $e');
-                    }
+                    audioPlayer.play();
                   }
+                  setState(() {
+                    isPlaying = !isPlaying;
+                  });
                 },
                 icon: Icon(
                   isPlaying ? Icons.pause : Icons.play_arrow,
@@ -139,7 +132,9 @@ class _MyAudioPlayerState extends State<MyAudioPlayer> {
                 ),
               ),
               IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  audioPlayer.seek(duration); // Seek to the end of the audio
+                },
                 icon: Icon(
                   Icons.skip_next,
                   color: secondaryColor,

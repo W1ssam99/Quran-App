@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:quran/quran.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:untitled5/componets/colors.dart';
 import 'package:untitled5/componets/icons.dart';
 import 'package:velocity_x/velocity_x.dart';
-import 'package:audioplayers/audioplayers.dart';
-import 'package:route_transitions/route_transitions.dart';
 import '../../widgets/detailWidget/audioWidget.dart';
 
 class SurahScreen extends StatefulWidget {
@@ -21,13 +19,13 @@ class _SurahScreenState extends State<SurahScreen> {
   @override
   Widget build(BuildContext context) {
     int index = 1;
-    AudioPlayer _audioPlayer = AudioPlayer();
+    late AudioPlayer _audioPlayer;
     bool _isPlaying = false;
+
 
     return Scaffold(
       appBar: AppBar(
         title: Text('Surah Screen'),
-        automaticallyImplyLeading: false,
         centerTitle: true,
         actions: [
           IconButton(
@@ -83,7 +81,8 @@ class _SurahScreenState extends State<SurahScreen> {
           ),
         ),
         20.heightBox,
-        MyAudioPlayer(surahIndex: widget.surahIndex,),
+        MyAudioPlayer(surahIndex: widget.surahIndex,
+        ),
       ]),
     );
   }
